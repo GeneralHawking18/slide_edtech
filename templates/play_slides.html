@@ -1,4 +1,3 @@
-<!-- HTML -->
 <html>
 <head>
     <title>Play slides</title>
@@ -32,8 +31,11 @@
         <button id="prev"> < </button>
         <input id="slide-number" type="number" min="1" max="10" value="1">
         <button id="next"> > </button>
+        <!-- Add a button to speak the speaker notes -->
+        <button id="speak"> 🗣️ </button>
       </div>
     </div>
+    <audio id="audio" controls autoplay></audio>
     <script>
         // JavaScript
         // Get the elements from the document
@@ -41,6 +43,8 @@
         var prev = document.getElementById("prev");
         var next = document.getElementById("next");
         var slideNumber = document.getElementById("slide-number");
+        // Get the speak button from the document
+        var speak = document.getElementById("speak");
 
         // Define a function to update the slide URL based on the input value
         function updateSlide() {
@@ -64,6 +68,22 @@
         slideNumber.addEventListener("change", function() {
           // Update the slide when the input value changes
           updateSlide();
+        });
+
+        // Add an event listener to the speak button
+        speak.addEventListener("click", function() {
+          // Get the presentation id from the url variable
+          var presentation_id = "{{ url }}".split("/")[5];
+          // Get the slide number from the input value
+          var slide_number = slideNumber.value;
+          // Send a GET request to the /speak route with the presentation id and the slide number as parameters
+          fetch("/speak/" + presentation_id + "/" + slide_number).then(function(response) {
+            return response.blob();
+          }).then(function(blob) {
+            // Create a URL from the blob and set it as the source of the audio element
+            var url = URL.createObjectURL(blob);
+            audio.src = url;
+          });
         });
     </script>
 </body>

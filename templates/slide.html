@@ -1,48 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Google Slides Demo</title>
+  <title>Trang web của tôi</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <iframe id="slides"
-        src="https://docs.google.com/presentation/d/{{presentation_url}}/embed?start=false&loop=false&delayms=3000&amp;rm=minimal"
-        frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true"
-        webkitallowfullscreen="true"></iframe>
-    <script>
-        // Get the iframe element
-        const slides = document.getElementById("slides");
-        // Add a hashchange event listener to the iframe
-        slides.addEventListener("hashchange", function () {
-            // Get the hash part of the iframe src
-            const hash = slides.src.split("#")[1];
-            // Do something with the hash, such as sending it to the parent window
-            console.log(hash);
-            // Check if the hash exists
-            if (hash) {
-                // Encode the hash before sending it
-                const encodedHash = encodeURIComponent(hash);
-                // Use contentWindow.postMessage to send a message to the parent window with the encoded hash as the data
-                slides.contentWindow.postMessage(encodedHash, "*");
-            }
-        });
-        // Add a message event listener to the parent window
-        window.addEventListener("message", function (event) {
-            // Check if the message comes from the iframe
-            if (event.source === slides.contentWindow) {
-                // Get the data from the message
-                const data = event.data;
-                // Do something with the data, such as sending it to Flask
-                console.log(data);
-                // Use fetch to send a POST request to Flask with the data as the body
-                fetch("/get_slide_hash", {
-                    method: "POST",
-                    body: data
-                })
-                .then(response => response.text())
-                .then(data => console.log(data))
-                .catch(error => console.error(error));
-            }
-        });
-    </script>
+  <iframe id="myframe" src="https://docs.google.com/presentation/d/1hoBu-iW6HiSoW1UOTt7ppTlBOey9MGFnAHucxIc6VUo/embed?start=false&loop=false&delayms=3000" width="800" height="600" allowfullscreen="true" onload="showURL()" onhashchange="showURL()"></iframe>
+  <script>
+    function showURL() {
+      var iframe = document.getElementById("myframe"); // lấy tham chiếu đến khung bằng id
+      var url = iframe.contentWindow.location.href; // lấy URL của khung
+      alert(url); // hiển thị URL bằng cửa sổ thông báo
+      // hoặc console.log(url); // hiển thị URL bằng console
+
+      // gửi yêu cầu AJAX đến route /get_url của Flask và truyền URL như một tham số
+      $.ajax({
+        type: "POST",
+        url: "{{ url_for('get_url') }}",
+        data: {data: url}
+      });
+    }
+  </script>
 </body>
 </html>

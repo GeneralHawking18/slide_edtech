@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Slides teaching system</title>
+</head>
+<body>
+  <h1>Slides teaching system</h1>
+  <button onclick="readText()">Get speaker notes</button>
+  <iframe id="myframe" src="https://docs.google.com/presentation/d/1KZkk8Ys55wcb9GC-epciYaRijuQTarz9L4YdQOXuiNo/edit#slide=id.p1" crossorigin="use-credentials"
+  width="800" height="600" allowfullscreen="true"></iframe>
+  <input type="text" id="textbox" readonly> <!-- hộp văn bản để hiển thị nội dung của phần tử -->
+  <script>
+    // Hàm để đọc text từ slide
+    function readText() {
+      var iframe = document.getElementById("myframe"); // Lấy tham chiếu đến iframe
+      var iframeWindow = iframe.contentWindow; // Truy cập vào cửa sổ con của iframe
+      var xpath = "/html/body/div[1]/b/span"; // XPath của phần tử chứa text trong slide
+      var element = iframeWindow.document.evaluate(xpath, iframeWindow.document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; // Tìm kiếm phần tử bằng XPath
+      var text = element.textContent; // Lấy nội dung của phần tử
+      var textbox = document.getElementById("textbox"); // Lấy tham chiếu đến hộp văn bản
+      textbox.value = text; // Gán nội dung của phần tử vào hộp văn bản
+    }
+  </script>
+</body>
+</html>

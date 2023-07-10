@@ -2,9 +2,19 @@ from flask import Flask, request, jsonify
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 
+# Create a Flask app object
+app = Flask("Google Slides App")
+
+# Create a service account credentials object
+SCOPES = ['https://www.googleapis.com/auth/presentations.readonly']
+
+
+# Create a Google Slides API service object
+
+
 class SlidesUtils():
     def __init__(self, flow):
-        self.credentials = flow.credentials
+        self.crediential = flow.credentials
 
     
     def get_speaker_notes(self):
@@ -55,3 +65,6 @@ class SlidesUtils():
 
         # Return the speaker notes text as a json response
         return jsonify({"speaker_notes": speaker_notes_text})
+
+if __name__ == "__main__":
+    app.run(debug = True)

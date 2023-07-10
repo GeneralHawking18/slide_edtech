@@ -5,10 +5,10 @@ from flask import (
 )
 
 
-def read_content():
-    text = request.form['text']
-    lang = request.form['lang']
-    tts = gTTS(text=text, lang=lang)
+def read_content(text):
+    # text = request.form['text']
+    #lang = request.form['lang']
+    tts = gTTS(text=text, lang="en")
 
     buffer = io.BytesIO()
     tts.write_to_fp(buffer)

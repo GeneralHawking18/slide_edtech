@@ -1,39 +1,55 @@
-from flask import send_static_file, render_template
-import sounddevice as sd
-import soundfile as sf
 
-# Define the constants for the audio recording parameters
-SAMPLERATE = 44100  # Hertz
-DURATION = 10  # seconds
 
-# Create a class to encapsulate the audio recording functions and attributes
-class AudioRecorder:
-    def __init__(self):
-        # Initialize the samplerate and duration attributes
-        self.samplerate = SAMPLERATE
-        self.duration = DURATION
-    
-    def start_recording(self):
-        # Start recording using sounddevice library
-        self.recording = sd.rec(int(self.duration * self.samplerate),
-                                samplerate=self.samplerate,
-                                channels=2)
-    
-    def stop_recording(self):
-        # Stop recording using sounddevice library
-        sd.stop()
-    
-    def play_recording(self):
-        # Play the recording using sounddevice library
-        sd.play(self.recording, self.samplerate)
-    
-    def save_recording(self, filename):
-        # Save the recording to a wav file using soundfile library
-        sf.write(filename, self.recording, self.samplerate)
-    
-    def display_recording_page(self):
-        # Display the recording page using Flask app object
-        return send_static_file('audio_rec.html')
+import os
 
-    # Add any other methods for audio recording as needed
+import moviepy.editor as mp
+from moviepy.video.io import ffmpeg_tools
 
+
+def converts_to_mp4(file):
+    # Đọc file mp3 từ bộ nhớ vào một đối tượng BytesIO
+    file_name = 'data'
+    temp_dir = "temp"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
+    
+    mp3_dir = os.path.join(temp_dir, "{}.mp3".format(file_name))
+    file.save(os.path.join(mp3_dir))
+
+    wav_dir =  os.path.join(temp_dir, "{}.wav".format(file_name))
+    ffmpeg_tools.ffmpeg_extract_audio(mp3_dir, wav_dir)
+
+    # Tạo đối tượng AudioFileClip từ file mp3
+    audio = mp.AudioFileClip(wav_dir)
+    
+
+    # Tạo đối tượng ImageClip từ ảnh tĩnh (bạn có thể thay đổi ảnh tùy ý)
+    image = mp.ImageClip('image.jpg')
+    # Thiết lập thời lượng của ImageClip bằng với thời lượng của AudioFileClip
+    image.duration = audio.duration
+
+    # Kết hợp ImageClip và AudioFileClip để tạo đối tượng VideoFileClip
+    video = image.set_audio(audio)
+
+    # Tạo một đối tượng BytesIO để lưu video mp4 vào bộ nhớ
+
+    # Xuất video mp4 vào đối tượng BytesIO
+
+    mp4_dir = "{}/{}.mp4".format(temp_dir, file_name)
+    video.write_videofile(mp4_dir, codec="libx264", fps=1)
+    # video_file.save()
+     # Xóa file mp3 khỏi thư mục tạm
+    
+    os.remove(mp3_dir)
+    os.remove(wav_dir)
+    return mp4_dir
+    # os.remove(os.path.join('./audio', "data.mp4"))
+
+    # Tạo một đối tượng MediaIoBaseUpload từ đối tượng BytesIO
+    # media_body = MediaIoBaseUpload(video_file, "video/mp4", resumable=True)
+
+   
+
+    """
+    # Tạo một đối tượng MediaIoBaseUpload từ đối tượng BytesIO
+    media_body = MediaIoBaseUpload(video_file, "video/mp4", resumable=True)"""

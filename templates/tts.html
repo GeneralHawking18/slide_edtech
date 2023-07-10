@@ -1,7 +1,9 @@
 <html>
+
 <head>
     <title>TTS Demo</title>
 </head>
+
 <body>
     <h1>TTS Demo</h1>
     <form action="/read" method="post">
@@ -20,19 +22,20 @@
     <script>
         var form = document.querySelector('form');
         var audio = document.querySelector('audio');
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
             var formData = new FormData(form);
             fetch('/read', {
                 method: 'POST',
                 body: formData
-            }).then(function(response) {
+            }).then(function (response) {
                 return response.blob();
-            }).then(function(blob) {
+            }).then(function (blob) {
                 var url = URL.createObjectURL(blob);
                 audio.src = url;
             });
         });
     </script>
 </body>
+
 </html>

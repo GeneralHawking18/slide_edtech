@@ -1,0 +1,49 @@
+service = build('slides', 'v1', credentials=credentials)
+
+# The ID of the presentation to update.
+presentation_id = '...'
+
+# The ID of the audio file in Google Drive.
+audio_id = '...'
+
+# The ID of the slide to insert the audio.
+slide_id = '...'
+
+# The size of the audio in EMU (1 cm = 360000 EMU).
+audio_size = {
+  "width": {
+    "magnitude": 3000000,
+    "unit": "EMU"
+  },
+  "height": {
+    "magnitude": 3000000,
+    "unit": "EMU"
+  }
+}
+
+# The transform of the audio in EMU (1 cm = 360000 EMU).
+audio_transform = {
+  "scaleX": 1,
+  "scaleY": 1,
+  "translateX": 311708,
+  "translateY": 744575,
+  "unit": "EMU"
+}
+
+# Create a batchUpdate request with a createVideo request.
+requests = [
+    {
+        "createVideo": {
+            "source": "DRIVE",
+            "id": audio_id,
+            "elementProperties": {
+                "pageObjectId": slide_id,
+                "size": audio_size,
+                "transform": audio_transform
+            }
+        }
+    }
+]
+
+# Execute the request.
+response = service.presentations().batchUpdate(presentationId=presentation_id, body={"requests": requests}).execute()
